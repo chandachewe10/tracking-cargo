@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createAuditLog } from "@/lib/audit";
+import { sendStatusUpdateEmail } from "@/lib/email";
 
 export async function POST(
   req: NextRequest,
@@ -30,6 +31,8 @@ export async function POST(
       return NextResponse.json({ error: "Shipment not found" }, { status: 404 });
     }
 
+    const now = new Date();
+
     const [trackingEntry] = await Promise.all([
       prisma.trackingHistory.create({
         data: {
@@ -46,7 +49,7 @@ export async function POST(
         data: {
           status,
           currentLocation: location,
-          ...(status === "DELIVERED" ? { deliveredAt: new Date() } : {}),
+          ...(status === "DELIVERED" ? { deliveredAt: now } : {}),
         },
       }),
     ]);
@@ -60,6 +63,25 @@ export async function POST(
       shipmentId: id,
       details: `Updated tracking: ${status} at ${location} — ${description}`,
     });
+
+    // Send email notification to receiver if email exists
+    if (shipment.receiverEmail) {
+      try {
+        await sendStatusUpdateEmail({
+          to: shipment.receiverEmail,
+          receiverName: shipment.receiverName,
+          trackingNumber: shipment.trackingNumber,
+          newStatus: status,
+          currentLocation: location,
+          description,
+          destinationLocation: shipment.destinationLocation,
+          timestamp: now,
+          expectedDeliveryDate: shipment.expectedDeliveryDate,
+        });
+      } catch (emailErr) {
+        console.error("Email send failed (non-fatal):", emailErr);
+      }
+    }
 
     return NextResponse.json(trackingEntry, { status: 201 });
   } catch (error) {

@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { generateTrackingNumber } from "@/lib/utils";
 import { createAuditLog } from "@/lib/audit";
+import { sendShipmentCreatedEmail } from "@/lib/email";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -58,6 +59,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const trackingNumber = generateTrackingNumber();
 
+    // Receiver email is required
+    if (!body.receiverEmail) {
+      return NextResponse.json(
+        { error: "Receiver email address is required to send tracking notifications." },
+        { status: 400 }
+      );
+    }
+
     const shipment = await prisma.shipment.create({
       data: {
         trackingNumber,
@@ -69,11 +78,11 @@ export async function POST(req: NextRequest) {
         senderEmail: body.senderEmail || null,
         receiverName: body.receiverName,
         receiverPhone: body.receiverPhone,
-        receiverEmail: body.receiverEmail || null,
+        receiverEmail: body.receiverEmail,
         originLocation: body.originLocation,
         destinationLocation: body.destinationLocation,
         currentLocation: body.originLocation,
-        status: "PENDING",
+        status: "LOADED",
         expectedDeliveryDate: body.expectedDeliveryDate
           ? new Date(body.expectedDeliveryDate)
           : null,
@@ -84,9 +93,9 @@ export async function POST(req: NextRequest) {
     await prisma.trackingHistory.create({
       data: {
         shipmentId: shipment.id,
-        status: "PENDING",
+        status: "LOADED",
         location: body.originLocation,
-        description: "Shipment created and registered in system",
+        description: "Cargo loaded and registered in the system",
         updatedById: session.user.id,
       },
     });
@@ -100,6 +109,22 @@ export async function POST(req: NextRequest) {
       shipmentId: shipment.id,
       details: `Created shipment ${trackingNumber} for ${body.receiverName}`,
     });
+
+    // Send confirmation email to receiver
+    try {
+      await sendShipmentCreatedEmail({
+        to: body.receiverEmail,
+        receiverName: body.receiverName,
+        trackingNumber,
+        description: body.description,
+        senderName: body.senderName,
+        originLocation: body.originLocation,
+        destinationLocation: body.destinationLocation,
+        expectedDeliveryDate: shipment.expectedDeliveryDate,
+      });
+    } catch (emailErr) {
+      console.error("Email send failed (non-fatal):", emailErr);
+    }
 
     return NextResponse.json(shipment, { status: 201 });
   } catch (error) {

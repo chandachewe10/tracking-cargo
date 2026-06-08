@@ -212,14 +212,21 @@ export default function NewShipmentPage() {
                 />
               </div>
               <div>
-                <label className="label">Email Address</label>
+                <label className="label">
+                  Email Address *
+                  <span className="ml-1 text-xs font-normal text-blue-600">(for tracking notifications)</span>
+                </label>
                 <input
                   type="email"
                   value={form.receiverEmail}
                   onChange={(e) => update("receiverEmail", e.target.value)}
                   placeholder="receiver@email.co.zm"
                   className="input"
+                  required
                 />
+                <p className="text-xs text-gray-400 mt-1">
+                  The customer will receive email updates on every status change.
+                </p>
               </div>
             </div>
           </div>

@@ -12,15 +12,16 @@ export function generateTrackingNumber(): string {
 }
 
 export const SHIPMENT_STATUSES = [
-  { value: "PENDING", label: "Pending", color: "bg-gray-100 text-gray-800" },
-  { value: "RECEIVED", label: "Received at Origin", color: "bg-blue-100 text-blue-800" },
-  { value: "DISPATCHED", label: "Dispatched", color: "bg-indigo-100 text-indigo-800" },
-  { value: "IN_TRANSIT", label: "In Transit", color: "bg-yellow-100 text-yellow-800" },
-  { value: "AT_HUB", label: "Arrived at Hub", color: "bg-orange-100 text-orange-800" },
-  { value: "OUT_FOR_DELIVERY", label: "Out for Delivery", color: "bg-purple-100 text-purple-800" },
-  { value: "DELIVERED", label: "Delivered", color: "bg-green-100 text-green-800" },
-  { value: "FAILED", label: "Delivery Failed", color: "bg-red-100 text-red-800" },
-  { value: "RETURNED", label: "Returned", color: "bg-red-100 text-red-800" },
+  { value: "PENDING",          label: "Pending",            color: "bg-gray-100 text-gray-800"   },
+  { value: "LOADED",           label: "Loaded",             color: "bg-sky-100 text-sky-800"     },
+  { value: "RECEIVED",         label: "Received at Origin", color: "bg-blue-100 text-blue-800"   },
+  { value: "DISPATCHED",       label: "Dispatched",         color: "bg-indigo-100 text-indigo-800" },
+  { value: "IN_TRANSIT",       label: "In Transit",         color: "bg-yellow-100 text-yellow-800" },
+  { value: "AT_HUB",           label: "Arrived at Hub",     color: "bg-orange-100 text-orange-800" },
+  { value: "OUT_FOR_DELIVERY", label: "Out for Delivery",   color: "bg-purple-100 text-purple-800" },
+  { value: "DELIVERED",        label: "Delivered",          color: "bg-green-100 text-green-800"  },
+  { value: "FAILED",           label: "Delivery Failed",    color: "bg-red-100 text-red-800"     },
+  { value: "RETURNED",         label: "Returned",           color: "bg-rose-100 text-rose-800"   },
 ];
 
 export function getStatusInfo(status: string) {
