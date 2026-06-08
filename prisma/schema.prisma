@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String?
+  role          String    @default("ADMIN")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+  trackingUpdates TrackingHistory[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Shipment {
+  id                  String           @id @default(cuid())
+  trackingNumber      String           @unique
+  description         String
+  weight              Float?
+  dimensions          String?
+  senderName          String
+  senderPhone         String
+  senderEmail         String?
+  receiverName        String
+  receiverPhone       String
+  receiverEmail       String?
+  originLocation      String
+  destinationLocation String
+  currentLocation     String
+  status              String           @default("PENDING")
+  expectedDeliveryDate DateTime?
+  deliveredAt         DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  trackingHistory     TrackingHistory[]
+  auditLogs           AuditLog[]
+
+  @@map("shipments")
+}
+
+model TrackingHistory {
+  id          String   @id @default(cuid())
+  shipmentId  String
+  status      String
+  location    String
+  description String
+  timestamp   DateTime @default(now())
+  updatedById String?
+  shipment    Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  updatedBy   User?    @relation(fields: [updatedById], references: [id])
+
+  @@map("tracking_history")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  userEmail  String?
+  action     String
+  entityType String
+  entityId   String?
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+  shipmentId String?
+  user       User?    @relation(fields: [userId], references: [id])
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id])
+
+  @@map("audit_logs")
+}
