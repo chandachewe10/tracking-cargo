@@ -153,7 +153,7 @@ export default function NewShipmentPage() {
                   type="text"
                   value={form.senderName}
                   onChange={(e) => update("senderName", e.target.value)}
-                  placeholder="John Doe"
+                  placeholder="Chanda Bwalya"
                   className="input"
                   required
                 />
@@ -164,7 +164,7 @@ export default function NewShipmentPage() {
                   type="tel"
                   value={form.senderPhone}
                   onChange={(e) => update("senderPhone", e.target.value)}
-                  placeholder="+254 700 000 000"
+                  placeholder="+260 977 000 000"
                   className="input"
                   required
                 />
@@ -175,7 +175,7 @@ export default function NewShipmentPage() {
                   type="email"
                   value={form.senderEmail}
                   onChange={(e) => update("senderEmail", e.target.value)}
-                  placeholder="sender@email.com"
+                  placeholder="sender@company.co.zm"
                   className="input"
                 />
               </div>
@@ -195,7 +195,7 @@ export default function NewShipmentPage() {
                   type="text"
                   value={form.receiverName}
                   onChange={(e) => update("receiverName", e.target.value)}
-                  placeholder="Jane Smith"
+                  placeholder="Mutale Phiri"
                   className="input"
                   required
                 />
@@ -206,7 +206,7 @@ export default function NewShipmentPage() {
                   type="tel"
                   value={form.receiverPhone}
                   onChange={(e) => update("receiverPhone", e.target.value)}
-                  placeholder="+254 711 000 000"
+                  placeholder="+260 966 000 000"
                   className="input"
                   required
                 />
@@ -217,7 +217,7 @@ export default function NewShipmentPage() {
                   type="email"
                   value={form.receiverEmail}
                   onChange={(e) => update("receiverEmail", e.target.value)}
-                  placeholder="receiver@email.com"
+                  placeholder="receiver@email.co.zm"
                   className="input"
                 />
               </div>
@@ -238,7 +238,7 @@ export default function NewShipmentPage() {
                 type="text"
                 value={form.originLocation}
                 onChange={(e) => update("originLocation", e.target.value)}
-                placeholder="e.g. Mombasa Port, Kenya"
+                placeholder="e.g. Lusaka City Market, Zambia"
                 className="input"
                 required
               />
@@ -249,7 +249,7 @@ export default function NewShipmentPage() {
                 type="text"
                 value={form.destinationLocation}
                 onChange={(e) => update("destinationLocation", e.target.value)}
-                placeholder="e.g. Nairobi CBD, Kenya"
+                placeholder="e.g. Kitwe CBD, Zambia"
                 className="input"
                 required
               />

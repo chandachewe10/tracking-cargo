@@ -235,10 +235,10 @@ export default function HomePage() {
             <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8">
               <div className="space-y-4">
                 {[
-                  { time: "Jun 8, 9:00 AM", status: "Out for Delivery", loc: "Nairobi CBD Hub", active: true },
-                  { time: "Jun 8, 3:00 AM", status: "Arrived at Hub", loc: "Nairobi Sorting Facility" },
-                  { time: "Jun 7, 6:00 PM", status: "In Transit", loc: "Mombasa → Nairobi" },
-                  { time: "Jun 7, 10:00 AM", status: "Dispatched", loc: "Mombasa Port" },
+                  { time: "Jun 8, 9:00 AM", status: "Out for Delivery", loc: "Kitwe CBD Hub", active: true },
+                  { time: "Jun 8, 3:00 AM", status: "Arrived at Hub", loc: "Ndola Sorting Facility" },
+                  { time: "Jun 7, 6:00 PM", status: "In Transit", loc: "Kapiri Mposhi Checkpoint" },
+                  { time: "Jun 7, 10:00 AM", status: "Dispatched", loc: "Lusaka City Market" },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
                     <div className="flex flex-col items-center">

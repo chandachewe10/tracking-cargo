@@ -21,54 +21,68 @@ async function main() {
 
   console.log("Admin user:", admin.email);
 
-  // Create sample shipments
+  // Create sample shipments (Zambian context)
   const shipments = [
     {
       trackingNumber: "TRK-SAMPLE-0001",
-      description: "Electronics - Laptop and accessories",
+      description: "Electronics – Laptop, tablet and accessories",
       weight: 3.5,
-      senderName: "TechMart Kenya",
-      senderPhone: "+254 700 123 456",
-      senderEmail: "dispatch@techmart.co.ke",
-      receiverName: "John Mwangi",
-      receiverPhone: "+254 711 234 567",
-      receiverEmail: "john.mwangi@email.com",
-      originLocation: "Mombasa Port, Kenya",
-      destinationLocation: "Nairobi CBD, Kenya",
-      currentLocation: "Nairobi Sorting Facility",
+      senderName: "TechMart Zambia Ltd",
+      senderPhone: "+260 977 123 456",
+      senderEmail: "dispatch@techmart.co.zm",
+      receiverName: "Chanda Bwalya",
+      receiverPhone: "+260 966 234 567",
+      receiverEmail: "chanda.bwalya@email.com",
+      originLocation: "Lusaka City Market, Lusaka",
+      destinationLocation: "Kitwe CBD, Kitwe",
+      currentLocation: "Ndola Sorting Hub",
       status: "OUT_FOR_DELIVERY",
       expectedDeliveryDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
     },
     {
       trackingNumber: "TRK-SAMPLE-0002",
-      description: "Clothing - Assorted garments",
+      description: "Clothing – Assorted garments and fabric",
       weight: 5.0,
-      senderName: "Fashion Hub Ltd",
-      senderPhone: "+254 722 345 678",
-      senderEmail: "orders@fashionhub.co.ke",
-      receiverName: "Sarah Kamau",
-      receiverPhone: "+254 733 456 789",
-      receiverEmail: "sarah.kamau@email.com",
-      originLocation: "Nairobi Industrial Area",
-      destinationLocation: "Kisumu City, Kenya",
-      currentLocation: "Kisumu Distribution Hub",
+      senderName: "Fashion Hub Zambia",
+      senderPhone: "+260 955 345 678",
+      senderEmail: "orders@fashionhub.co.zm",
+      receiverName: "Mutale Phiri",
+      receiverPhone: "+260 977 456 789",
+      receiverEmail: "mutale.phiri@email.com",
+      originLocation: "Industrial Area, Lusaka",
+      destinationLocation: "Livingstone City, Livingstone",
+      currentLocation: "Livingstone Distribution Hub",
       status: "DELIVERED",
       expectedDeliveryDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
       deliveredAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
     },
     {
       trackingNumber: "TRK-SAMPLE-0003",
-      description: "Medical Supplies - Pharmaceuticals",
+      description: "Medical Supplies – Pharmaceuticals and equipment",
       weight: 2.0,
-      senderName: "PharmaCare Ltd",
-      senderPhone: "+254 744 567 890",
-      receiverName: "Nakuru General Hospital",
-      receiverPhone: "+254 755 678 901",
-      originLocation: "Nairobi Westlands",
-      destinationLocation: "Nakuru, Kenya",
-      currentLocation: "Nakuru, Kenya",
+      senderName: "PharmaCare Zambia",
+      senderPhone: "+260 966 567 890",
+      receiverName: "Ndola General Hospital",
+      receiverPhone: "+260 212 610 000",
+      originLocation: "Cairo Road, Lusaka",
+      destinationLocation: "Ndola Teaching Hospital, Ndola",
+      currentLocation: "Kabwe Checkpoint",
       status: "IN_TRANSIT",
       expectedDeliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    },
+    {
+      trackingNumber: "TRK-SAMPLE-0004",
+      description: "Agricultural produce – Maize and seed stock",
+      weight: 50.0,
+      senderName: "Zambia Co-operative Farmers",
+      senderPhone: "+260 955 678 901",
+      receiverName: "Chingola Fresh Market",
+      receiverPhone: "+260 212 311 000",
+      originLocation: "Chipata Agricultural Hub, Chipata",
+      destinationLocation: "Chingola Town, Chingola",
+      currentLocation: "Lusaka Freight Depot",
+      status: "DISPATCHED",
+      expectedDeliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     },
   ];
 
@@ -77,7 +91,7 @@ async function main() {
     const existing = await prisma.shipment.findUnique({
       where: { trackingNumber: rest.trackingNumber },
     });
-    
+
     if (!existing) {
       const shipment = await prisma.shipment.create({
         data: {
@@ -86,60 +100,85 @@ async function main() {
         },
       });
 
-      // Add tracking history
-      const historyItems = [
+      // Build tracking history with intermediate Zambian stops
+      const historyItems: {
+        status: string;
+        location: string;
+        description: string;
+        timestamp: Date;
+      }[] = [
         {
           status: "PENDING",
           location: rest.originLocation,
-          description: "Shipment registered in system",
+          description: "Shipment registered and awaiting pickup",
           timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
         },
         {
           status: "RECEIVED",
           location: rest.originLocation,
-          description: "Package received and verified at origin facility",
+          description: "Package received, verified and logged at origin facility",
           timestamp: new Date(Date.now() - 2.5 * 24 * 60 * 60 * 1000),
         },
         {
           status: "DISPATCHED",
           location: rest.originLocation,
-          description: "Package dispatched from origin",
+          description: "Package dispatched from origin — en route",
           timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
         },
       ];
 
-      if (rest.status !== "PENDING" && rest.status !== "RECEIVED") {
+      // Add intermediate stops for Lusaka → Kitwe route
+      if (rest.trackingNumber === "TRK-SAMPLE-0001") {
+        historyItems.push(
+          {
+            status: "IN_TRANSIT",
+            location: "Kabwe Bus Terminal, Kabwe",
+            description: "Item passed through Kabwe checkpoint — on schedule",
+            timestamp: new Date(Date.now() - 1.5 * 24 * 60 * 60 * 1000),
+          },
+          {
+            status: "IN_TRANSIT",
+            location: "Kapiri Mposhi Junction, Kapiri Mposhi",
+            description: "Item passed through Kapiri Mposhi junction",
+            timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+          },
+          {
+            status: "AT_HUB",
+            location: "Ndola Sorting Hub, Ndola",
+            description: "Arrived at Ndola sorting hub — preparing for final delivery",
+            timestamp: new Date(Date.now() - 0.5 * 24 * 60 * 60 * 1000),
+          },
+          {
+            status: "OUT_FOR_DELIVERY",
+            location: "Ndola Sorting Hub, Ndola",
+            description: "Out for delivery to Kitwe CBD",
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+          }
+        );
+      } else if (rest.status !== "PENDING" && rest.status !== "RECEIVED" && rest.status !== "DISPATCHED") {
         historyItems.push({
           status: "IN_TRANSIT",
-          location: "En Route",
+          location: rest.currentLocation,
           description: "Package in transit to destination",
           timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         });
       }
 
-      if (rest.status === "OUT_FOR_DELIVERY" || rest.status === "DELIVERED") {
-        historyItems.push({
-          status: "AT_HUB",
-          location: rest.currentLocation,
-          description: "Arrived at destination hub",
-          timestamp: new Date(Date.now() - 0.5 * 24 * 60 * 60 * 1000),
-        });
-      }
-
       if (rest.status === "DELIVERED") {
-        historyItems.push({
-          status: "DELIVERED",
-          location: rest.destinationLocation,
-          description: "Package successfully delivered to recipient",
-          timestamp: deliveredAt || new Date(),
-        });
-      } else if (rest.status === "OUT_FOR_DELIVERY") {
-        historyItems.push({
-          status: "OUT_FOR_DELIVERY",
-          location: rest.currentLocation,
-          description: "Package out for delivery",
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        });
+        historyItems.push(
+          {
+            status: "AT_HUB",
+            location: rest.currentLocation,
+            description: "Arrived at destination hub for final sorting",
+            timestamp: new Date(Date.now() - 0.5 * 24 * 60 * 60 * 1000),
+          },
+          {
+            status: "DELIVERED",
+            location: rest.destinationLocation,
+            description: "Package successfully delivered to recipient — signature obtained",
+            timestamp: deliveredAt || new Date(),
+          }
+        );
       }
 
       for (const item of historyItems) {
