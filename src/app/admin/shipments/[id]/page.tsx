@@ -17,6 +17,9 @@ import {
   X,
   Copy,
   ExternalLink,
+  Navigation,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import {
   getStatusInfo,
@@ -69,8 +72,14 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
   const [editForm, setEditForm] = useState<Partial<Shipment>>({});
   const [saving, setSaving] = useState(false);
 
-  // Add tracking
-  const [showAddTracking, setShowAddTracking] = useState(false);
+  // Quick Location Update
+  const [quickLocation, setQuickLocation] = useState("");
+  const [quickNote, setQuickNote] = useState("");
+  const [updatingLocation, setUpdatingLocation] = useState(false);
+  const [locationMsg, setLocationMsg] = useState("");
+
+  // Full tracking event form
+  const [showFullTracking, setShowFullTracking] = useState(false);
   const [trackingForm, setTrackingForm] = useState({
     status: "",
     location: "",
@@ -104,6 +113,35 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  // Quick location update — keeps current status, just moves the pin
+  const handleQuickLocationUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!shipment || !quickLocation.trim()) return;
+    setUpdatingLocation(true);
+    setLocationMsg("");
+    try {
+      const res = await fetch(`/api/shipments/${id}/tracking`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: shipment.status === "PENDING" ? "IN_TRANSIT" : shipment.status,
+          location: quickLocation.trim(),
+          description: quickNote.trim() || `Item passed through ${quickLocation.trim()}`,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setLocationMsg("Location updated!");
+      setQuickLocation("");
+      setQuickNote("");
+      await fetchShipment();
+      setTimeout(() => setLocationMsg(""), 3000);
+    } catch {
+      setLocationMsg("Failed to update location");
+    } finally {
+      setUpdatingLocation(false);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -134,10 +172,11 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
         body: JSON.stringify(trackingForm),
       });
       if (!res.ok) throw new Error();
-      setTrackMsg("Tracking update added!");
+      setTrackMsg("Tracking event added!");
       setTrackingForm({ status: "", location: "", description: "" });
-      setShowAddTracking(false);
+      setShowFullTracking(false);
       await fetchShipment();
+      setTimeout(() => setTrackMsg(""), 3000);
     } catch {
       setTrackMsg("Failed to add tracking update");
     } finally {
@@ -199,7 +238,7 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
               <h1 className="text-2xl font-bold text-gray-900">Shipment Details</h1>
               <span className={`badge ${statusInfo.color}`}>{statusInfo.label}</span>
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
               <code className="text-sm font-mono text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
                 {shipment.trackingNumber}
               </code>
@@ -211,15 +250,15 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
                 target="_blank"
                 className="text-gray-400 hover:text-blue-600 text-xs flex items-center gap-1"
               >
-                <ExternalLink className="w-3.5 h-3.5" /> Public page
+                <ExternalLink className="w-3.5 h-3.5" /> Public view
               </Link>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {trackMsg && (
+          {(trackMsg || locationMsg) && (
             <span className="text-sm text-green-600 flex items-center gap-1">
-              <CheckCircle className="w-4 h-4" /> {trackMsg}
+              <CheckCircle className="w-4 h-4" /> {trackMsg || locationMsg}
             </span>
           )}
           {!editMode ? (
@@ -227,11 +266,7 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
               <button onClick={() => setEditMode(true)} className="btn-secondary">
                 <Edit className="w-4 h-4" /> Edit
               </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="btn-danger"
-              >
+              <button onClick={handleDelete} disabled={deleting} className="btn-danger">
                 <Trash2 className="w-4 h-4" />
                 {deleting ? "Deleting..." : "Delete"}
               </button>
@@ -339,10 +374,16 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="font-medium text-gray-900">{(shipment as Record<string, unknown>)[`${prefix}Name`] as string}</p>
-                    <p className="text-sm text-gray-600">{(shipment as Record<string, unknown>)[`${prefix}Phone`] as string}</p>
-                    {(shipment as Record<string, unknown>)[`${prefix}Email`] && (
-                      <p className="text-sm text-gray-500">{(shipment as Record<string, unknown>)[`${prefix}Email`] as string}</p>
+                    <p className="font-medium text-gray-900">
+                      {prefix === "sender" ? shipment.senderName : shipment.receiverName}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {prefix === "sender" ? shipment.senderPhone : shipment.receiverPhone}
+                    </p>
+                    {(prefix === "sender" ? shipment.senderEmail : shipment.receiverEmail) && (
+                      <p className="text-sm text-gray-500">
+                        {prefix === "sender" ? shipment.senderEmail : shipment.receiverEmail}
+                      </p>
                     )}
                   </div>
                 )}
@@ -364,6 +405,7 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
                     value={editForm.originLocation || ""}
                     onChange={(e) => setEditForm((f) => ({ ...f, originLocation: e.target.value }))}
                     className="input"
+                    placeholder="e.g. Lusaka, Zambia"
                   />
                 </div>
                 <div>
@@ -372,6 +414,7 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
                     value={editForm.destinationLocation || ""}
                     onChange={(e) => setEditForm((f) => ({ ...f, destinationLocation: e.target.value }))}
                     className="input"
+                    placeholder="e.g. Kitwe, Zambia"
                   />
                 </div>
                 <div>
@@ -386,57 +429,140 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col items-center">
-                    <div className="w-3 h-3 bg-blue-600 rounded-full" />
-                    <div className="w-0.5 h-8 bg-gray-200" />
-                    <div className="w-3 h-3 bg-green-600 rounded-full" />
+                {/* Origin → Destination visual */}
+                <div className="flex items-start gap-3">
+                  <div className="flex flex-col items-center pt-1">
+                    <div className="w-3 h-3 bg-blue-600 rounded-full ring-2 ring-blue-200" />
+                    <div className="w-0.5 h-10 bg-gradient-to-b from-blue-300 to-gray-200 my-1" />
+                    <div className="w-3 h-3 bg-green-600 rounded-full ring-2 ring-green-200" />
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     <div>
-                      <p className="text-xs text-gray-500">Origin</p>
-                      <p className="font-medium text-gray-900">{shipment.originLocation}</p>
+                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Origin</p>
+                      <p className="font-semibold text-gray-900 text-sm">{shipment.originLocation}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Destination</p>
-                      <p className="font-medium text-gray-900">{shipment.destinationLocation}</p>
+                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Destination</p>
+                      <p className="font-semibold text-gray-900 text-sm">{shipment.destinationLocation}</p>
                     </div>
                   </div>
                 </div>
-                <div className="pt-3 border-t border-gray-100 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-500">Current Location</p>
-                    <p className="font-medium text-blue-700">{shipment.currentLocation}</p>
-                  </div>
+                <div className="border-t border-gray-100 pt-3 grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs text-gray-500">Expected Delivery</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 text-sm">
                       {formatDate(shipment.expectedDeliveryDate)}
                     </p>
                   </div>
+                  {shipment.deliveredAt && (
+                    <div>
+                      <p className="text-xs text-gray-500">Delivered At</p>
+                      <p className="font-medium text-green-700 text-sm">
+                        {formatDateTime(shipment.deliveredAt)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Right: Tracking History */}
+        {/* Right: Location Updates + History */}
         <div className="space-y-5">
-          {/* Add Tracking */}
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-gray-900">Update Status</h2>
-              <button
-                onClick={() => setShowAddTracking(!showAddTracking)}
-                className="btn-primary text-sm py-1.5 px-3"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Add Update
-              </button>
+
+          {/* ── QUICK LOCATION UPDATE (Prominent) ── */}
+          <div className="card border-blue-200 bg-blue-50/40 p-5">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Navigation className="w-4 h-4 text-white" />
+              </div>
+              <h2 className="font-semibold text-gray-900">Update Current Location</h2>
+            </div>
+            <p className="text-xs text-gray-500 mb-4 ml-9">
+              Use this to update where the item currently is as it travels
+              through intermediate stops en route to{" "}
+              <span className="font-medium text-gray-700">{shipment.destinationLocation}</span>.
+            </p>
+
+            {/* Current pin */}
+            <div className="flex items-center gap-2 mb-4 px-3 py-2 bg-white rounded-lg border border-blue-200">
+              <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs text-gray-500">Current Location</p>
+                <p className="font-semibold text-blue-800 text-sm truncate">
+                  {shipment.currentLocation}
+                </p>
+              </div>
             </div>
 
-            {showAddTracking && (
-              <form onSubmit={handleAddTracking} className="space-y-3 border-t border-gray-100 pt-4">
+            <form onSubmit={handleQuickLocationUpdate} className="space-y-3">
+              <div>
+                <label className="label">New Current Location *</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={quickLocation}
+                    onChange={(e) => setQuickLocation(e.target.value)}
+                    placeholder="e.g. Kabwe Bus Terminal, Zambia"
+                    className="input pl-9"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="label">Note <span className="text-gray-400 font-normal">(optional)</span></label>
+                <input
+                  type="text"
+                  value={quickNote}
+                  onChange={(e) => setQuickNote(e.target.value)}
+                  placeholder="e.g. Package cleared at Kabwe checkpoint"
+                  className="input text-sm"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={updatingLocation || !quickLocation.trim()}
+                className="w-full btn-primary justify-center"
+              >
+                {updatingLocation ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Navigation className="w-4 h-4" />
+                    Update Location
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* ── FULL TRACKING EVENT ── */}
+          <div className="card p-5">
+            <button
+              onClick={() => setShowFullTracking(!showFullTracking)}
+              className="w-full flex items-center justify-between text-left"
+            >
+              <div className="flex items-center gap-2">
+                <Plus className="w-4 h-4 text-gray-500" />
+                <span className="font-semibold text-gray-900">Add Full Tracking Event</span>
+              </div>
+              {showFullTracking ? (
+                <ChevronUp className="w-4 h-4 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+            <p className="text-xs text-gray-400 mt-1 ml-6">
+              Change status + location (e.g. Dispatched, At Hub, Delivered)
+            </p>
+
+            {showFullTracking && (
+              <form onSubmit={handleAddTracking} className="space-y-3 border-t border-gray-100 pt-4 mt-4">
                 <div>
                   <label className="label">New Status *</label>
                   <select
@@ -452,12 +578,12 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
                   </select>
                 </div>
                 <div>
-                  <label className="label">Current Location *</label>
+                  <label className="label">Location *</label>
                   <input
                     type="text"
                     value={trackingForm.location}
                     onChange={(e) => setTrackingForm((f) => ({ ...f, location: e.target.value }))}
-                    placeholder="e.g. Nairobi Hub"
+                    placeholder="e.g. Ndola Sorting Hub, Zambia"
                     className="input"
                     required
                   />
@@ -467,63 +593,50 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
                   <textarea
                     value={trackingForm.description}
                     onChange={(e) => setTrackingForm((f) => ({ ...f, description: e.target.value }))}
-                    placeholder="e.g. Package arrived at sorting facility"
+                    placeholder="e.g. Package arrived at Ndola sorting facility"
                     className="input resize-none h-16 text-sm"
                     required
                   />
                 </div>
-                <button
-                  type="submit"
-                  disabled={addingTracking}
-                  className="w-full btn-primary"
-                >
-                  {addingTracking ? "Saving..." : "Save Update"}
+                <button type="submit" disabled={addingTracking} className="w-full btn-primary justify-center">
+                  {addingTracking ? "Saving..." : "Save Tracking Event"}
                 </button>
               </form>
             )}
-
-            {/* Current Status Summary */}
-            {!showAddTracking && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Current Status</span>
-                  <span className={`badge ${statusInfo.color}`}>{statusInfo.label}</span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-gray-500">Location: </span>
-                  <span className="text-gray-900">{shipment.currentLocation}</span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-gray-500">Created: </span>
-                  <span className="text-gray-900">{formatDate(shipment.createdAt)}</span>
-                </div>
-                {shipment.deliveredAt && (
-                  <div className="text-sm">
-                    <span className="text-gray-500">Delivered: </span>
-                    <span className="text-green-700">{formatDateTime(shipment.deliveredAt)}</span>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
-          {/* Timeline */}
+          {/* ── STATUS SUMMARY ── */}
+          <div className="card p-4">
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Current Status</span>
+                <span className={`badge ${statusInfo.color}`}>{statusInfo.label}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Created</span>
+                <span className="text-gray-900">{formatDate(shipment.createdAt)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Total Updates</span>
+                <span className="text-gray-900 font-medium">{shipment.trackingHistory.length}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── TRACKING TIMELINE ── */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-4">
               <Clock className="w-4 h-4 text-gray-500" />
               <h2 className="font-semibold text-gray-900">Tracking History</h2>
-              <span className="text-xs text-gray-400 ml-auto">
-                {shipment.trackingHistory.length} events
-              </span>
             </div>
 
             {shipment.trackingHistory.length === 0 ? (
               <div className="text-center py-8">
                 <AlertCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-500">No tracking history yet</p>
+                <p className="text-sm text-gray-500">No tracking events yet</p>
               </div>
             ) : (
-              <div className="space-y-0">
+              <div>
                 {shipment.trackingHistory.map((entry, i) => {
                   const entryStatus = getStatusInfo(entry.status);
                   const isFirst = i === 0;
@@ -549,7 +662,7 @@ export default function ShipmentDetailPage({ params }: { params: Promise<{ id: s
                           )}
                         </div>
                         <p className="text-sm text-gray-700 mt-1">{entry.description}</p>
-                        <div className="flex items-center gap-1 mt-1">
+                        <div className="flex items-center gap-1 mt-0.5">
                           <MapPin className="w-3 h-3 text-gray-400" />
                           <p className="text-xs text-gray-500">{entry.location}</p>
                         </div>
