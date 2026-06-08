@@ -1,24 +1,10 @@
-import { auth } from "./src/auth";
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
+import { authConfig } from "./src/auth.config";
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const isLoggedIn = !!req.auth;
+export const { auth: middleware } = NextAuth(authConfig);
 
-  const adminPaths = ["/admin", "/dashboard"];
-  const isAdminPath = adminPaths.some((path) => pathname.startsWith(path));
-
-  if (isAdminPath && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  if (pathname === "/login" && isLoggedIn) {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-  }
-
-  return NextResponse.next();
-});
+export default middleware;
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*", "/login"],
+  matcher: ["/admin/:path*", "/login"],
 };
