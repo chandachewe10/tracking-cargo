@@ -3,20 +3,143 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  Package,
   Search,
+  Package,
   MapPin,
-  Clock,
-  Shield,
-  Truck,
-  Globe,
+  Mail,
+  Phone,
+  ChevronLeft,
   ChevronRight,
-  CheckCircle,
+  Shield,
+  Award,
+  Globe,
+  Clock,
 } from "lucide-react";
+
+const LOGO = "/images/logo.svg";
+const ACCENT = "#F07B3F";
+const NAVY = "#0F2D52";
+const NAVY_DARK = "#081A33";
+
+const services = [
+  {
+    emoji: "✈️",
+    title: "Air Freight",
+    description:
+      "Express air cargo services with real-time tracking and priority handling for time-sensitive shipments worldwide.",
+    image: "/images/air-freight.jpg",
+  },
+  {
+    emoji: "⛴️",
+    title: "Marine Freight",
+    description:
+      "Cost-effective ocean shipping solutions for bulk cargo with comprehensive port-to-port and door-to-door services.",
+    image: "/images/marine-freight.jpg",
+  },
+  {
+    emoji: "🚛",
+    title: "Road & Rail",
+    description:
+      "Reliable ground transportation across continents with flexible scheduling and multi-modal integration.",
+    image: "/images/road-rail.jpg",
+  },
+  {
+    emoji: "⛰️",
+    title: "Minerals Shipping",
+    description:
+      "Specialized handling and secure transport for minerals and raw materials across global supply chains.",
+    image: "/images/minerals.jpg",
+  },
+  {
+    emoji: "🛡️",
+    title: "Cargo Insurance",
+    description:
+      "Comprehensive cargo insurance coverage to protect your valuable shipments against all risks.",
+    image: "/images/insurance.jpg",
+  },
+];
+
+const newsArticles = [
+  {
+    date: "Mar 20, 2026",
+    title: "Global Shipping Rates Stabilize After Recent Volatility",
+    excerpt:
+      "Ocean freight rates are showing signs of stabilization following months of fluctuation, bringing relief to global supply chains and logistics planners.",
+    image: "/images/news-1.jpg",
+  },
+  {
+    date: "Mar 18, 2026",
+    title: "New Sustainable Aviation Fuel Mandates Impact Air Cargo",
+    excerpt:
+      "Major air freight carriers are accelerating their transition to sustainable aviation fuels ahead of new international environmental regulations.",
+    image: "/images/news-2.jpg",
+  },
+  {
+    date: "Mar 15, 2026",
+    title: "Cross-Border Rail Infrastructure Gets Major Investment",
+    excerpt:
+      "A new multi-billion dollar investment package aims to modernize cross-border rail networks, significantly reducing transit times for continental freight.",
+    image: "/images/news-3.jpg",
+  },
+  {
+    date: "Mar 12, 2026",
+    title: "AI-Driven Route Optimization Reduces Fleet Emissions by 15%",
+    excerpt:
+      "Leading logistics providers report significant emission reductions and cost savings after implementing next-generation AI routing algorithms.",
+    image: "/images/news-4.jpg",
+  },
+  {
+    date: "Mar 10, 2026",
+    title: "Port Automation Projects Accelerate Globally",
+    excerpt:
+      "Major international ports are fast-tracking automation initiatives to handle increased cargo volumes and mitigate labor shortage impacts.",
+    image: "/images/news-5.jpg",
+  },
+  {
+    date: "Mar 8, 2026",
+    title: "Last-Mile Delivery Innovations Reshaping Urban Logistics",
+    excerpt:
+      "From cargo bikes to autonomous delivery droids, urban centers are seeing a rapid transformation in how final-mile deliveries are executed.",
+    image: "/images/news-6.jpg",
+  },
+];
+
+const trustBadges = [
+  { icon: Shield, label: "Fully Insured" },
+  { icon: Award, label: "ISO 9001" },
+  { icon: Clock, label: "24/7 Tracking" },
+  { icon: Globe, label: "150+ Countries" },
+];
+
+const navLinks = [
+  { href: "#home", label: "Home" },
+  { href: "#services", label: "Services" },
+  { href: "#news", label: "News" },
+  { href: "#track", label: "Track Shipment" },
+  { href: "#contact", label: "Contact" },
+];
+
+const heroSlides = ["/images/hero-1.jpg", "/images/hero-2.jpg", "/images/hero-3.jpg"];
+
+function HexIcon() {
+  return (
+    <div
+      className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center text-2xl"
+      style={{
+        clipPath: "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
+        background: `linear-gradient(135deg, ${ACCENT}, #F4A261)`,
+      }}
+    >
+      📦
+    </div>
+  );
+}
 
 export default function HomePage() {
   const [trackingNumber, setTrackingNumber] = useState("");
+  const [slide, setSlide] = useState(0);
   const router = useRouter();
 
   const handleTrack = (e: React.FormEvent) => {
@@ -27,176 +150,195 @@ export default function HomePage() {
     }
   };
 
-  const features = [
-    {
-      icon: <MapPin className="w-6 h-6 text-blue-600" />,
-      title: "Real-Time Location",
-      description:
-        "Track your package's exact location at every step of its journey.",
-    },
-    {
-      icon: <Clock className="w-6 h-6 text-blue-600" />,
-      title: "Live Status Updates",
-      description:
-        "Get instant notifications whenever your shipment status changes.",
-    },
-    {
-      icon: <Shield className="w-6 h-6 text-blue-600" />,
-      title: "Secure Tracking",
-      description:
-        "Your shipment data is protected with enterprise-grade security.",
-    },
-    {
-      icon: <Globe className="w-6 h-6 text-blue-600" />,
-      title: "Global Coverage",
-      description:
-        "Track shipments across domestic and international destinations.",
-    },
-  ];
-
-  const steps = [
-    { step: "01", title: "Enter Tracking Number", desc: "Type the tracking number provided by your shipper." },
-    { step: "02", title: "View Shipment Details", desc: "See origin, destination, current location and status." },
-    { step: "03", title: "Follow the Journey", desc: "Watch every milestone from dispatch to delivery." },
-  ];
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen text-white" style={{ backgroundColor: NAVY }}>
       {/* Navigation */}
-      <nav className="border-b border-gray-100 bg-white/80 backdrop-blur sticky top-0 z-50">
+      <nav
+        className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 backdrop-blur-md"
+        style={{ backgroundColor: `${NAVY}e6` }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Package className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">TrackIt</span>
+            <Link href="/" className="flex items-center gap-3">
+              <Image src={LOGO} alt="FastCargo Logo" width={40} height={40} unoptimized />
+              <span className="text-lg font-bold tracking-wide">
+                Fast<span style={{ color: ACCENT }}>Cargo</span>
+              </span>
+            </Link>
+
+            <div className="hidden md:flex items-center gap-1 text-sm text-white/80">
+              {navLinks.map((link, i) => (
+                <span key={link.href} className="flex items-center">
+                  <a
+                    href={link.href}
+                    className="px-3 py-2 hover:text-[#F07B3F] transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                  {i < navLinks.length - 1 && <span className="text-white/30">•</span>}
+                </span>
+              ))}
             </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/track"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Track Package
-              </Link>
-              <Link
-                href="/login"
-                className="btn-primary text-sm"
-              >
-                Admin Login
-              </Link>
-            </div>
+
+            <Link href="/login" className="text-sm text-white/70 hover:text-white transition-colors">
+              Admin Login
+            </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-white blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-blue-300 blur-3xl" />
+      <section
+        id="home"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16"
+      >
+        <div className="absolute inset-0">
+          <Image
+            src={heroSlides[slide]}
+            alt="Cargo logistics"
+            fill
+            className="object-cover opacity-25"
+            priority
+            sizes="100vw"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to bottom, ${NAVY}cc, ${NAVY}f2 60%, ${NAVY})`,
+            }}
+          />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-sm mb-6 backdrop-blur-sm border border-white/20">
-              <Truck className="w-4 h-4" />
-              <span>Real-time cargo & parcel tracking</span>
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-              Track Your Shipment{" "}
-              <span className="text-blue-200">Anywhere,</span>{" "}
-              <span className="text-blue-200">Anytime</span>
-            </h1>
-            <p className="text-lg sm:text-xl text-blue-100 mb-10 leading-relaxed">
-              Enter your tracking number for real-time updates on your cargo.
-              Know exactly where your package is — from origin to delivery.
-            </p>
 
-            {/* Tracking Search */}
-            <form onSubmit={handleTrack} className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center py-20">
+          <div className="flex justify-center gap-3 mb-8">
+            <HexIcon />
+            <HexIcon />
+            <HexIcon />
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+            Global Reach.{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F07B3F] to-[#F4A261]">
+              Trusted Delivery.
+            </span>
+          </h1>
+
+          <p className="text-base sm:text-lg text-white/70 mb-10 max-w-2xl mx-auto">
+            Air • Marine • Road • Rail • Minerals Shipping &amp; Cargo Insurance | Fast. Secure.
+            Reliable.
+          </p>
+
+          <div id="track" className="max-w-xl mx-auto">
+            <form onSubmit={handleTrack} className="space-y-3">
+              <label className="block text-xs font-semibold tracking-widest uppercase text-left" style={{ color: ACCENT }}>
+                Enter Airway Bill / Tracking Number
+              </label>
+              <div className="relative">
                 <input
                   type="text"
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
-                  placeholder="Enter tracking number (e.g. TRK-ABC123-XY12)"
-                  className="w-full pl-12 pr-4 py-4 rounded-xl text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-lg"
+                  placeholder="FC100234"
+                  className="w-full px-5 py-4 pr-12 rounded-lg text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#F07B3F] shadow-xl"
                 />
+                <Package className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               </div>
               <button
                 type="submit"
                 disabled={!trackingNumber.trim()}
-                className="px-8 py-4 bg-white text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
+                className="w-full py-4 rounded-lg font-bold text-white flex items-center justify-center gap-2 transition-opacity disabled:opacity-50 hover:opacity-90"
+                style={{ backgroundColor: ACCENT }}
               >
-                Track Now
-                <ChevronRight className="w-5 h-5" />
+                <Search className="w-5 h-5" />
+                TRACK CARGO
               </button>
             </form>
 
-            <p className="mt-4 text-blue-200 text-sm">
-              No account needed. Just enter your tracking number to get started.
-            </p>
-          </div>
-        </div>
-
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 60L1440 60L1440 0C1440 0 1080 60 720 60C360 60 0 0 0 0L0 60Z" fill="white" />
-          </svg>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need to Track Your Shipment
-            </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-              Our platform gives you complete visibility into your cargo's journey with powerful, easy-to-use tracking tools.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="group p-6 rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all"
+            <div className="flex flex-col sm:flex-row gap-3 mt-5">
+              <a
+                href="#contact"
+                className="flex-1 py-3 px-6 rounded-lg border border-white/30 text-white font-semibold hover:bg-white/10 transition-colors text-center"
               >
-                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-                  {f.icon}
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{f.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{f.description}</p>
-              </div>
-            ))}
+                GET A QUOTE
+              </a>
+              <Link
+                href="/track"
+                className="flex-1 py-3 px-6 rounded-lg font-semibold text-white flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                style={{ backgroundColor: ACCENT }}
+              >
+                <Package className="w-4 h-4" />
+                TRACK YOUR CARGO
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-4 mt-12">
+            <button
+              type="button"
+              onClick={() => setSlide((s) => (s - 1 + heroSlides.length) % heroSlides.length)}
+              className="p-2 rounded-full border border-white/20 hover:border-[#F07B3F] transition-colors"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="flex gap-2">
+              {heroSlides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setSlide(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    i === slide ? "bg-[#F07B3F]" : "bg-white/30"
+                  }`}
+                  aria-label={`Slide ${i + 1}`}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setSlide((s) => (s + 1) % heroSlides.length)}
+              className="p-2 rounded-full border border-white/20 hover:border-[#F07B3F] transition-colors"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Services */}
+      <section id="services" className="relative py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              How It Works
-            </h2>
-            <p className="text-lg text-gray-500">Track your package in three simple steps.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Our Services</h2>
+            <p className="text-white/60 text-lg max-w-2xl mx-auto">
+              Comprehensive logistics solutions tailored to your cargo needs
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((s, i) => (
-              <div key={s.step} className="relative">
-                {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-blue-100 z-0 -translate-x-1/2" />
-                )}
-                <div className="relative z-10 flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-lg">
-                    {s.step}
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2 text-lg">{s.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            {services.map((service) => (
+              <div
+                key={service.title}
+                className="rounded-xl glass-effect hover-lift border-[#F07B3F]/20 h-full group cursor-pointer overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgb(240,123,63,0.12)] hover:border-[#F07B3F]/50"
+              >
+                <div className="relative h-40 overflow-hidden bg-white/5">
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 20vw"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: `linear-gradient(to top, ${NAVY}, transparent)` }}
+                  />
+                </div>
+                <div className="p-5 flex-1 flex flex-col">
+                  <span className="text-2xl mb-2">{service.emoji}</span>
+                  <h3 className="font-bold text-lg mb-2">{service.title}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">{service.description}</p>
                 </div>
               </div>
             ))}
@@ -204,96 +346,127 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Status Guide */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Understand Every Status Update
-              </h2>
-              <p className="text-gray-500 mb-8">
-                We keep you informed at every stage of your shipment's journey with clear, easy-to-understand status updates.
-              </p>
-              <div className="space-y-3">
-                {[
-                  { label: "Received at Origin", color: "bg-blue-500" },
-                  { label: "Dispatched", color: "bg-indigo-500" },
-                  { label: "In Transit", color: "bg-yellow-500" },
-                  { label: "Arrived at Hub", color: "bg-orange-500" },
-                  { label: "Out for Delivery", color: "bg-purple-500" },
-                  { label: "Delivered", color: "bg-green-500" },
-                ].map((s) => (
-                  <div key={s.label} className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${s.color}`} />
-                    <span className="text-gray-700">{s.label}</span>
-                    <CheckCircle className="w-4 h-4 text-gray-300 ml-auto" />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8">
-              <div className="space-y-4">
-                {[
-                  { time: "Jun 8, 9:00 AM", status: "Out for Delivery", loc: "Kitwe CBD Hub", active: true },
-                  { time: "Jun 8, 3:00 AM", status: "Arrived at Hub", loc: "Ndola Sorting Facility" },
-                  { time: "Jun 7, 6:00 PM", status: "In Transit", loc: "Kapiri Mposhi Checkpoint" },
-                  { time: "Jun 7, 10:00 AM", status: "Dispatched", loc: "Lusaka City Market" },
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className={`w-3 h-3 rounded-full mt-1 ${item.active ? "bg-blue-600" : "bg-gray-300"}`} />
-                      {i < 3 && <div className="w-0.5 h-8 bg-gray-200 mt-1" />}
-                    </div>
-                    <div className="pb-4">
-                      <p className={`font-medium text-sm ${item.active ? "text-blue-700" : "text-gray-700"}`}>
-                        {item.status}
-                      </p>
-                      <p className="text-xs text-gray-500">{item.loc}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+      {/* News */}
+      <section
+        id="news"
+        className="py-24 relative z-10 border-y border-white/5 px-4 sm:px-6 lg:px-8"
+        style={{ backgroundColor: `${NAVY}4d` }}
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Latest Industry News</h2>
+            <p className="text-white/60 text-lg max-w-2xl mx-auto">
+              Stay informed with the latest updates, trends, and insights from the global shipping
+              and logistics sector.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {newsArticles.map((article) => (
+              <article
+                key={article.title}
+                className="group relative flex flex-col glass-effect rounded-2xl overflow-hidden hover:border-[#F07B3F]/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(240,123,63,0.12)] hover:-translate-y-1"
+              >
+                <div className="relative h-48 overflow-hidden bg-white/5">
+                  <Image
+                    src={article.image}
+                    alt={article.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="p-5 flex-1 flex flex-col">
+                  <time className="text-xs font-medium mb-2" style={{ color: ACCENT }}>
+                    {article.date}
+                  </time>
+                  <h3 className="font-bold text-base mb-2 leading-snug group-hover:text-[#F07B3F] transition-colors">
+                    {article.title}
+                  </h3>
+                  <p className="text-sm text-white/60 leading-relaxed">{article.excerpt}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Track Your Package?</h2>
-          <p className="text-blue-100 text-lg mb-8">
-            Enter your tracking number now and get instant updates on your shipment.
-          </p>
-          <Link
-            href="/track"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-lg"
-          >
-            <Search className="w-5 h-5" />
-            Start Tracking
-          </Link>
+      {/* Trust badges */}
+      <section className="relative py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+          {trustBadges.map(({ icon: Icon, label }) => (
+            <div
+              key={label}
+              className="flex flex-col items-center gap-3 p-6 rounded-xl glass-effect text-center"
+            >
+              <Icon className="w-8 h-8" style={{ color: ACCENT }} />
+              <span className="text-sm font-semibold text-white/80">{label}</span>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Package className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-white font-bold text-lg">TrackIt</span>
+      <footer
+        id="contact"
+        className="border-t border-white/10 py-14 px-4 sm:px-6 lg:px-8"
+        style={{ backgroundColor: NAVY_DARK }}
+      >
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <Image src={LOGO} alt="FastCargo Logo" width={36} height={36} unoptimized />
+              <span className="font-bold text-lg">
+                Fast<span style={{ color: ACCENT }}>Cargo</span>
+              </span>
             </div>
-            <p className="text-sm text-center">
-              © {new Date().getFullYear()} TrackIt. Cargo & Parcel Tracking System.
+            <p className="text-sm text-white/50 leading-relaxed">
+              Global reach with trusted protection. Fast, secure logistics solutions for all your
+              cargo needs.
             </p>
-            <div className="flex gap-6 text-sm">
-              <Link href="/track" className="hover:text-white transition-colors">Track</Link>
-              <Link href="/login" className="hover:text-white transition-colors">Admin</Link>
-            </div>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4">Quick Links</h4>
+            <ul className="space-y-2 text-sm text-white/60">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} className="hover:text-[#F07B3F] transition-colors">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4">Contact Us</h4>
+            <ul className="space-y-3 text-sm text-white/40">
+              <li className="flex items-start gap-2 min-h-[20px]">
+                <MapPin className="w-4 h-4 mt-0.5 shrink-0 opacity-40" style={{ color: ACCENT }} />
+                <span>&nbsp;</span>
+              </li>
+              <li className="flex items-center gap-2 min-h-[20px]">
+                <Mail className="w-4 h-4 shrink-0 opacity-40" style={{ color: ACCENT }} />
+                <span>&nbsp;</span>
+              </li>
+              <li className="flex items-center gap-2 min-h-[20px]">
+                <Phone className="w-4 h-4 shrink-0 opacity-40" style={{ color: ACCENT }} />
+                <span>&nbsp;</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/40">
+          <p>© {new Date().getFullYear()} FastCargo. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-white/70 transition-colors">
+              Privacy Policy
+            </a>
+            <a href="#" className="hover:text-white/70 transition-colors">
+              Terms of Service
+            </a>
           </div>
         </div>
       </footer>

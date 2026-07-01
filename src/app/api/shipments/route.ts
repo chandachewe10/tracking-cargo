@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { generateTrackingNumber } from "@/lib/utils";
 import { createAuditLog } from "@/lib/audit";
 import { sendShipmentCreatedEmail } from "@/lib/email";
+import { sendShipmentCreatedSms } from "@/lib/sms";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
       details: `Created shipment ${trackingNumber} for ${body.receiverName}`,
     });
 
-    // Send confirmation email to receiver
+    // Send confirmation email and SMS to receiver
     try {
       await sendShipmentCreatedEmail({
         to: body.receiverEmail,
@@ -124,6 +125,23 @@ export async function POST(req: NextRequest) {
       });
     } catch (emailErr) {
       console.error("Email send failed (non-fatal):", emailErr);
+    }
+
+    if (body.receiverPhone) {
+      try {
+        await sendShipmentCreatedSms({
+          to: body.receiverPhone,
+          receiverName: body.receiverName,
+          trackingNumber,
+          description: body.description,
+          senderName: body.senderName,
+          originLocation: body.originLocation,
+          destinationLocation: body.destinationLocation,
+          expectedDeliveryDate: shipment.expectedDeliveryDate,
+        });
+      } catch (smsErr) {
+        console.error("SMS send failed (non-fatal):", smsErr);
+      }
     }
 
     return NextResponse.json(shipment, { status: 201 });

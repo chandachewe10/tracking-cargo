@@ -35,6 +35,7 @@
     "@types/node": "^22.15.21",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
+    "playwright": "^1.49.1",
     "prisma": "^6.9.0",
     "tsx": "^4.22.4",
     "typescript": "^5.8.3"

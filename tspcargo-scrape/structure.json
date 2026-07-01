@@ -1,0 +1,59 @@
+{
+  "bg": "rgba(0, 0, 0, 0)",
+  "color": "rgb(0, 0, 0)",
+  "font": "Inter, sans-serif",
+  "sections": [
+    {
+      "tag": "SECTION",
+      "class": "relative min-h-screen flex items-center justify-center overflow-hidden",
+      "text": "📦\n📦\n📦\nGlobal Reach. Trusted Protection.\n\nAir • Marine • Road • Rail • Mineral"
+    },
+    {
+      "tag": "SECTION",
+      "class": "relative py-24 px-4 sm:px-6 lg:px-8",
+      "text": "Our Services\n\nComprehensive logistics solutions tailored to your cargo needs\n\n✈️"
+    },
+    {
+      "tag": "SECTION",
+      "class": "py-24 relative z-10 bg-[#001F3F]/30 border-y border-white/5",
+      "text": "Latest Industry News\n\nStay informed with the latest updates, trends, and insight"
+    },
+    {
+      "tag": "SECTION",
+      "class": "relative py-16 px-4 sm:px-6 lg:px-8",
+      "text": "Insured by Lloyd's\nISO 9001\n24/7 Tracking\n150+ Countries"
+    },
+    {
+      "tag": "SECTION",
+      "class": "",
+      "text": ""
+    }
+  ],
+  "newsCount": 6,
+  "news": [
+    {
+      "class": "rounded-xl border bg-card text-card-foreground shadow glass-effect hover-lift border-[#FF6B35]/20 h-full group cursor-pointer overflow-hidden flex flex-col",
+      "text": "✈️\nAir Freight\n\nExpress air cargo services with real-time tracking and priority handling for time-sensitive shipments wo"
+    },
+    {
+      "class": "rounded-xl border bg-card text-card-foreground shadow glass-effect hover-lift border-[#FF6B35]/20 h-full group cursor-pointer overflow-hidden flex flex-col",
+      "text": "⛴️\nMarine Freight\n\nCost-effective ocean shipping solutions for bulk cargo with comprehensive port-to-port and door-to-do"
+    },
+    {
+      "class": "rounded-xl border bg-card text-card-foreground shadow glass-effect hover-lift border-[#FF6B35]/20 h-full group cursor-pointer overflow-hidden flex flex-col",
+      "text": "🚛\nRoad & Rail\n\nReliable ground transportation across continents with flexible scheduling and multi-modal integration."
+    },
+    {
+      "class": "rounded-xl border bg-card text-card-foreground shadow glass-effect hover-lift border-[#FF6B35]/20 h-full group cursor-pointer overflow-hidden flex flex-col",
+      "text": "⛰️\nMinerals Shipping\n\nSpecialized handling and secure transport for minerals and raw materials across global supply chai"
+    },
+    {
+      "class": "rounded-xl border bg-card text-card-foreground shadow glass-effect hover-lift border-[#FF6B35]/20 h-full group cursor-pointer overflow-hidden flex flex-col",
+      "text": "🛡️\nCargo Insurance\n\nComprehensive cargo insurance coverage by Lloyd's to protect your valuable shipments against all ri"
+    },
+    {
+      "class": "group relative flex flex-col bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-[#FF6B35]/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(255,107,53,0.12)] hover:-translate-y-1",
+      "text": "Mar 20, 2026\nGlobal Shipping Rates Stabilize After Recent Volatility\n\nOcean freight rates are showing signs of stabiliza"
+    }
+  ]
+}

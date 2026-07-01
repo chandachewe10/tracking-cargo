@@ -6,10 +6,13 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TrackIt – Cargo & Parcel Tracking",
+  title: "FastCargo – Global Freight & Cargo Insurance Solutions",
   description:
-    "Track your shipments in real-time. Enter your tracking number to get live updates on your cargo.",
-  keywords: ["tracking", "cargo", "parcel", "shipment", "delivery"],
+    "Air, marine, road & rail, minerals shipping and cargo insurance. Fast, secure logistics with real-time tracking.",
+  keywords: ["FastCargo", "freight", "cargo", "insurance", "tracking", "logistics", "shipping"],
+  icons: {
+    icon: "/images/logo.svg",
+  },
 };
 
 export default function RootLayout({

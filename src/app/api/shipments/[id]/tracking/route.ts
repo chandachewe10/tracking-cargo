@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createAuditLog } from "@/lib/audit";
 import { sendStatusUpdateEmail } from "@/lib/email";
+import { sendStatusUpdateSms } from "@/lib/sms";
 
 export async function POST(
   req: NextRequest,
@@ -64,7 +65,7 @@ export async function POST(
       details: `Updated tracking: ${status} at ${location} — ${description}`,
     });
 
-    // Send email notification to receiver if email exists
+    // Send email and SMS notifications to receiver
     if (shipment.receiverEmail) {
       try {
         await sendStatusUpdateEmail({
@@ -80,6 +81,24 @@ export async function POST(
         });
       } catch (emailErr) {
         console.error("Email send failed (non-fatal):", emailErr);
+      }
+    }
+
+    if (shipment.receiverPhone) {
+      try {
+        await sendStatusUpdateSms({
+          to: shipment.receiverPhone,
+          receiverName: shipment.receiverName,
+          trackingNumber: shipment.trackingNumber,
+          newStatus: status,
+          currentLocation: location,
+          description,
+          destinationLocation: shipment.destinationLocation,
+          timestamp: now,
+          expectedDeliveryDate: shipment.expectedDeliveryDate,
+        });
+      } catch (smsErr) {
+        console.error("SMS send failed (non-fatal):", smsErr);
       }
     }
 
