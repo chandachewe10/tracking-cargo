@@ -4,8 +4,14 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Package, Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
+import Image from "next/image";
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
 import { Suspense } from "react";
+
+const LOGO = "/images/logo.svg";
+const ACCENT = "#F07B3F";
+const NAVY = "#0F2D52";
+const NAVY_DARK = "#081A33";
 
 function LoginForm() {
   const router = useRouter();
@@ -45,21 +51,24 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 flex items-center justify-center p-4">
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: `linear-gradient(135deg, ${NAVY_DARK} 0%, ${NAVY} 50%, #163a66 100%)`,
+      }}
+    >
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-              <Package className="w-7 h-7 text-blue-600" />
-            </div>
-            <span className="text-2xl font-bold text-white">TrackIt</span>
+            <Image src={LOGO} alt="FastCargo Logo" width={48} height={48} unoptimized />
+            <span className="text-2xl font-bold text-white">
+              Fast<span style={{ color: ACCENT }}>Cargo</span>
+            </span>
           </Link>
-          <p className="text-blue-200 mt-2 text-sm">Admin Portal</p>
+          <p className="text-white/60 mt-2 text-sm">Admin Portal</p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-white/10">
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
           <p className="text-gray-500 text-sm mb-7">Sign in to manage shipments</p>
 
@@ -80,7 +89,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@example.com"
-                  className="input pl-10"
+                  className="input pl-10 focus:ring-[#F07B3F] focus:border-transparent"
                   required
                   autoComplete="email"
                 />
@@ -96,7 +105,7 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="input pl-10 pr-10"
+                  className="input pl-10 pr-10 focus:ring-[#F07B3F] focus:border-transparent"
                   required
                   autoComplete="current-password"
                 />
@@ -113,7 +122,8 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3 text-white font-semibold rounded-lg transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style={{ backgroundColor: ACCENT }}
             >
               {loading ? (
                 <>
@@ -128,7 +138,7 @@ function LoginForm() {
 
           <div className="mt-6 pt-6 border-t border-gray-100">
             <p className="text-center text-sm text-gray-500">
-              <Link href="/track" className="text-blue-600 hover:underline">
+              <Link href="/track" className="hover:underline" style={{ color: ACCENT }}>
                 ← Back to tracking
               </Link>
             </p>
@@ -144,7 +154,11 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-blue-600" />}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen" style={{ backgroundColor: "#0F2D52" }} />
+      }
+    >
       <LoginForm />
     </Suspense>
   );
