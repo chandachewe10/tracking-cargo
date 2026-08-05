@@ -77,7 +77,7 @@ export async function sendShipmentCreatedSms(p: ShipmentCreatedSmsParams) {
     : "";
 
   const message = [
-    `Hi ${p.receiverName}, your shipment is registered with FastCargo.`,
+    `Hi ${p.receiverName}, your shipment is registered with LuxShipCargo.`,
     `Tracking #: ${p.trackingNumber}`,
     `From: ${p.originLocation}`,
     `To: ${p.destinationLocation}`,
@@ -113,7 +113,7 @@ export async function sendStatusUpdateSms(p: StatusUpdateSmsParams) {
       : "";
 
   const message = [
-    `Hi ${p.receiverName}, shipment update from FastCargo.`,
+    `Hi ${p.receiverName}, shipment update from LuxShipCargo.`,
     `Tracking #: ${p.trackingNumber}`,
     `Status: ${statusLabel}`,
     `Location: ${p.currentLocation}`,

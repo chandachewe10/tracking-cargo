@@ -26,7 +26,7 @@ export default function TrackPage() {
             <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg">
               <Package className="w-7 h-7 text-blue-600" />
             </div>
-            <span className="text-2xl font-bold text-white">TrackIt</span>
+            <span className="text-2xl font-bold text-white">LuxShipCargo</span>
           </Link>
           <p className="text-blue-200 mt-2 text-sm">Real-time shipment tracking</p>
         </div>

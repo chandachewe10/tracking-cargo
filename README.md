@@ -1,4 +1,4 @@
-# TrackIt – Cargo & Parcel Tracking System
+# LuxShipCargo – Cargo & Parcel Tracking System
 
 A full-featured, responsive web-based cargo and parcel tracking system built with Next.js 16, TypeScript, Prisma, and NextAuth.
 
@@ -81,7 +81,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000)
 
 **Default admin credentials:**
-- Email: `admin@trackit.com`
+- Email: `admin@luxshipcargo.com`
 - Password: `admin123`
 
 ## Deployment to Vercel
@@ -104,7 +104,7 @@ Open [http://localhost:3000](http://localhost:3000)
 ```bash
 git init
 git add .
-git commit -m "Initial commit: TrackIt tracking system"
+git commit -m "Initial commit: LuxShipCargo tracking system"
 git remote add origin https://github.com/your-username/tracking-app.git
 git push -u origin main
 ```

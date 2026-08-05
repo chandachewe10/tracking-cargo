@@ -160,9 +160,9 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-3">
-              <Image src={LOGO} alt="FastCargo Logo" width={40} height={40} unoptimized />
+              <Image src={LOGO} alt="LuxShipCargo Logo" width={40} height={40} unoptimized />
               <span className="text-lg font-bold tracking-wide">
-                Fast<span style={{ color: ACCENT }}>Cargo</span>
+                LuxShip<span style={{ color: ACCENT }}>Cargo</span>
               </span>
             </Link>
 
@@ -415,9 +415,9 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <Image src={LOGO} alt="FastCargo Logo" width={36} height={36} unoptimized />
+              <Image src={LOGO} alt="LuxShipCargo Logo" width={36} height={36} unoptimized />
               <span className="font-bold text-lg">
-                Fast<span style={{ color: ACCENT }}>Cargo</span>
+                LuxShip<span style={{ color: ACCENT }}>Cargo</span>
               </span>
             </div>
             <p className="text-sm text-white/50 leading-relaxed">
@@ -459,7 +459,7 @@ export default function HomePage() {
         </div>
 
         <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/40">
-          <p>© {new Date().getFullYear()} FastCargo. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} LuxShipCargo. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white/70 transition-colors">
               Privacy Policy

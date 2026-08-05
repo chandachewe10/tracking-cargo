@@ -18,14 +18,14 @@ export async function POST() {
     await prisma.user.create({
       data: {
         name: "Admin User",
-        email: "admin@trackit.com",
+        email: "admin@luxshipcargo.com",
         password: hashedPassword,
         role: "ADMIN",
       },
     });
 
     return NextResponse.json(
-      { message: "Admin user created successfully", email: "admin@trackit.com", password: "admin123" },
+      { message: "Admin user created successfully", email: "admin@luxshipcargo.com", password: "admin123" },
       { status: 201 }
     );
   } catch (error) {

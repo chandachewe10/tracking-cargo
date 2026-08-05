@@ -60,9 +60,9 @@ function LoginForm() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3">
-            <Image src={LOGO} alt="FastCargo Logo" width={48} height={48} unoptimized />
+            <Image src={LOGO} alt="LuxShipCargo Logo" width={48} height={48} unoptimized />
             <span className="text-2xl font-bold text-white">
-              Fast<span style={{ color: ACCENT }}>Cargo</span>
+              LuxShip<span style={{ color: ACCENT }}>Cargo</span>
             </span>
           </Link>
           <p className="text-white/60 mt-2 text-sm">Admin Portal</p>
@@ -143,7 +143,7 @@ function LoginForm() {
               </Link>
             </p>
             <p className="text-center text-xs text-gray-400 mt-3">
-              Default: admin@trackit.com / admin123
+              Default: admin@luxshipcargo.com / admin123
             </p>
           </div>
         </div>

@@ -53,7 +53,7 @@ export default function AdminSidebar() {
             <Package className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="font-bold text-white leading-none">TrackIt</p>
+            <p className="font-bold text-white leading-none">LuxShipCargo</p>
             <p className="text-xs text-gray-400 mt-0.5">Admin Panel</p>
           </div>
         </Link>

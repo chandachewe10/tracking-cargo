@@ -17,7 +17,7 @@ function createTransporter() {
   });
 }
 
-const FROM = `${process.env.MAIL_FROM_NAME ?? "FastCargo"} <${process.env.MAIL_FROM_ADDRESS ?? process.env.MAIL_USERNAME}>`;
+const FROM = `${process.env.MAIL_FROM_NAME ?? "LuxShipCargo"} <${process.env.MAIL_FROM_ADDRESS ?? process.env.MAIL_USERNAME}>`;
 const APP_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
 // ─── Helper: check that env vars are present ──────────────────────────────────
@@ -34,7 +34,7 @@ function emailWrapper(content: string) {
   <div style="max-width:600px;margin:32px auto;padding:0 16px;">
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#2563eb,#4f46e5);border-radius:16px 16px 0 0;padding:28px 32px;">
-      <span style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">📦 FastCargo</span>
+      <span style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">📦 LuxShipCargo</span>
     </div>
     <!-- Body -->
     <div style="background:#fff;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;">
@@ -42,7 +42,7 @@ function emailWrapper(content: string) {
     </div>
     <!-- Footer -->
     <div style="text-align:center;padding:20px;color:#94a3b8;font-size:12px;">
-      <p style="margin:0;">© ${new Date().getFullYear()} FastCargo — Cargo &amp; Parcel Tracking</p>
+      <p style="margin:0;">© ${new Date().getFullYear()} LuxShipCargo — Cargo &amp; Parcel Tracking</p>
       <p style="margin:4px 0 0;">You received this because a shipment is registered to your email.</p>
     </div>
   </div>
@@ -205,7 +205,7 @@ export async function sendStatusUpdateEmail(p: StatusUpdateParams) {
     ${isDelivered ? `
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;margin-bottom:24px;text-align:center;">
       <p style="margin:0;font-size:15px;color:#15803d;font-weight:700;">🎉 Package successfully delivered!</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#16a34a;">Thank you for choosing FastCargo.</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#16a34a;">Thank you for choosing LuxShipCargo.</p>
     </div>` : ""}
 
     <div style="text-align:center;margin:24px 0 10px;">

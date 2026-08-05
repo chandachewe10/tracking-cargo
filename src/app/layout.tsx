@@ -6,10 +6,10 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FastCargo – Global Freight & Cargo Insurance Solutions",
+  title: "LuxShipCargo – Global Freight & Cargo Insurance Solutions",
   description:
     "Air, marine, road & rail, minerals shipping and cargo insurance. Fast, secure logistics with real-time tracking.",
-  keywords: ["FastCargo", "freight", "cargo", "insurance", "tracking", "logistics", "shipping"],
+  keywords: ["LuxShipCargo", "freight", "cargo", "insurance", "tracking", "logistics", "shipping"],
   icons: {
     icon: "/images/logo.svg",
   },
